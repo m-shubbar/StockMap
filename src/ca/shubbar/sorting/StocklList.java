@@ -50,6 +50,17 @@ public class StocklList {
         return list.get(key);
     }
 
+
+    // By appling this priceList, not only the srocklist will be unmodifiable, the entry
+    // within it also will not be modifiable.
+    public Map<String, Double> priceList() {
+        Map<String, Double> prices = new LinkedHashMap<>();
+        for (Map.Entry<String, StockItem> item : list.entrySet()) {
+            prices.put(item.getKey(), item.getValue().getPrice());
+        }
+        return Collections.unmodifiableMap(prices);
+    }
+
     public Map<String, StockItem> items(){
         return Collections.unmodifiableMap(list);
     }

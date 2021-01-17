@@ -1,5 +1,7 @@
 package ca.shubbar.sorting;
 
+import java.util.Map;
+
 public class Main {
     private static StocklList stocklList = new StocklList();
 
@@ -26,7 +28,7 @@ public class Main {
         System.out.println(stocklList);
 
         System.out.println("\n==================\nItems in stock:");
-        for(String s : stocklList.items().keySet()) {
+        for (String s : stocklList.items().keySet()) {
             System.out.println(s);
         }
 
@@ -49,15 +51,22 @@ public class Main {
         // now print the updated stockList
         System.out.println(stocklList);
 
-        // Try to modify the list other way
-        temp = new StockItem("iPhone4", 680);
 
         // This will cause an error because it's an unmodifiable map
+        // Try to modify the list other way
+//        temp = new StockItem("iPhone4", 680);
 //        stocklList.items().put(temp.getName(), temp);
 
         // This will work because the collection itself is not modifiable, not the object
 //        stocklList.items().get("Sock").adjustStock(5000);
+//        stocklList.get("Sock").adjustStock(5000);
 //        System.out.println(stocklList);
+
+
+        for (Map.Entry<String, Double> price : stocklList.priceList().entrySet()) {
+            System.out.println(price.getKey() + " costs " + price.getValue());
+        }
+
 
     }
 
