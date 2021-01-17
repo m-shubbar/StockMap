@@ -7,18 +7,19 @@ package ca.shubbar.sorting;
 public class StockItem implements Comparable<StockItem> {
     private final String name;
     private double price;
-    private int quantityStock = 0;
+    private int quantitInyStock = 0;
+    private int reserved = 0;
 
     public StockItem(String name, double price) {
         this.name = name;
         this.price = price;
-        this.quantityStock = 0;
+        this.quantitInyStock = 0;
     }
 
     public StockItem(String name, double price, int quantityStock) {
         this.name = name;
         this.price = price;
-        this.quantityStock = quantityStock;
+        this.quantitInyStock = quantityStock;
     }
 
     public String getName() {
@@ -29,8 +30,8 @@ public class StockItem implements Comparable<StockItem> {
         return price;
     }
 
-    public int getQuantityStock() {
-        return quantityStock;
+    public int availableQuantity() {
+        return quantitInyStock - reserved;
     }
 
     public void setPrice(double price) {
@@ -40,10 +41,35 @@ public class StockItem implements Comparable<StockItem> {
     }
 
     public void adjustStock(int quantity) {
-        int newQuantity = this.quantityStock + quantity;
+        int newQuantity = this.quantitInyStock + quantity;
         if (quantity >= 0) {
-            this.quantityStock = newQuantity;
+            this.quantitInyStock = newQuantity;
         }
+    }
+
+    public int reserveStock(int quantity) {
+        if (quantity <= availableQuantity()) {
+            reserved += quantity;
+            return quantity;
+        }
+        return 0;
+    }
+
+    public int unreserveStock(int quantity) {
+        if(quantity <= reserved) {
+            reserved -= quantity;
+            return quantity;
+        }
+        return 0;
+    }
+
+    public int finalizeStock(int quantity) {
+        if(quantity <= reserved) {
+            quantitInyStock -= quantity;
+            reserved -= quantity;
+            return quantity;
+        }
+        return 0;
     }
 
     @Override
@@ -79,6 +105,6 @@ public class StockItem implements Comparable<StockItem> {
 
     @Override
     public String toString() {
-        return this.name + ": price " + String.format("$%.2f", this.price);
+        return this.name + ": price " + String.format("$%.2f", this.price) + ". Reserved: " + this.reserved;
     }
 }

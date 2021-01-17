@@ -26,22 +26,44 @@ public class StocklList {
             if (inStock != item) {
                 // if they are not the same -> this item is already exists in the map, so we
                 // adjust and pass the original quantity
-                item.adjustStock(inStock.getQuantityStock());
+                item.adjustStock(inStock.availableQuantity());
             }
             // Otherwise, the item is new, no adjustment needed.
-
             // The list will not duplicate entries, so if its already exists nothing added.
             list.put(item.getName(), item);
-            return item.getQuantityStock();
+            return item.availableQuantity();
         }
         return 0;
     }
 
     public int sellStock(String item, int quantity) {
-        StockItem inStock = list.getOrDefault(item, null);
-        if ((inStock != null) && (inStock.getQuantityStock() >= quantity) && (inStock.getQuantityStock() > 0)) {
-            inStock.adjustStock(-quantity);
-            return quantity;
+        StockItem inStock = list.get(item);
+        if ((inStock != null) && (quantity > 0)) {
+            return inStock.finalizeStock(quantity);
+        }
+        return 0;
+
+
+//        StockItem inStock = list.getOrDefault(item, null);
+//        if ((inStock != null) && (inStock.availableQuantity() >= quantity) && (inStock.availableQuantity() > 0)) {
+//            inStock.adjustStock(-quantity);
+//            return quantity;
+//        }
+//        return 0;
+    }
+
+    public int reserveStock(String item, int quantity) {
+        StockItem inStock = list.get(item);
+        if ((inStock != null) && (quantity > 0)) {
+            return inStock.reserveStock(quantity);
+        }
+        return 0;
+    }
+
+    public int unreserveStock(String item, int quantity) {
+        StockItem inStock = list.get(item);
+        if ((inStock != null) && (quantity > 0)) {
+            return inStock.unreserveStock(quantity);
         }
         return 0;
     }
@@ -61,7 +83,7 @@ public class StocklList {
         return Collections.unmodifiableMap(prices);
     }
 
-    public Map<String, StockItem> items(){
+    public Map<String, StockItem> items() {
         return Collections.unmodifiableMap(list);
     }
 
@@ -69,11 +91,11 @@ public class StocklList {
     public String toString() {
         String s = "\nStock List:\n";
         double totalCost = 0.0;
-        for(Map.Entry<String, StockItem> item : list.entrySet()) {
+        for (Map.Entry<String, StockItem> item : list.entrySet()) {
             StockItem stockItem = item.getValue();
-            double itemValue = stockItem.getPrice() * stockItem.getQuantityStock();
+            double itemValue = stockItem.getPrice() * stockItem.availableQuantity();
 
-            s = s + stockItem + "\n\t-> #" + stockItem.getQuantityStock() + " in stock. \n\t-> With a value of: ";
+            s = s + stockItem + "\n\t-> #" + stockItem.availableQuantity() + " in stock. \n\t-> With a value of: ";
             s = s + String.format("$%.2f", itemValue) + "\n==================\n";
             totalCost += itemValue;
         }
