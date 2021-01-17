@@ -1,7 +1,7 @@
 package ca.shubbar.sorting;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -9,11 +9,14 @@ import java.util.Map;
  * Created at 2021-01-17
  */
 public class StocklList {
+    // Using a generic type at declaration has a great benefit for later changing
     private final Map<String, StockItem> list;
 
 
     public StocklList() {
-        this.list = new HashMap<>();
+//        this.list = new HashMap<>();
+        // we use this to preserve alphabetical order
+        this.list = new LinkedHashMap<>();
     }
 
     public int addStock(StockItem item) {
@@ -59,10 +62,11 @@ public class StocklList {
             StockItem stockItem = item.getValue();
             double itemValue = stockItem.getPrice() * stockItem.getQuantityStock();
 
-            s = s + stockItem + "There are " + stockItem.getQuantityStock() + " in stock. Value of items: ";
-            s = s + itemValue + "\n";
+            s = s + stockItem + "\n\t-> #" + stockItem.getQuantityStock() + " in stock. \n\t-> With a value of: ";
+            s = s + String.format("$%.2f", itemValue) + "\n==================\n";
             totalCost += itemValue;
         }
-        return s + "Total stock value: " + totalCost;
+        return s + "Total stock value: " + String.format("$%.2f", totalCost);
+
     }
 }
