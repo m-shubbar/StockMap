@@ -7,6 +7,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+        // Testing
+
         System.out.println();
         StockItem temp = new StockItem("Sock", 2.99, 50);
         stocklList.addStock(temp);
@@ -33,6 +35,7 @@ public class Main {
         }
 
         Basket customerBasket = new Basket("Customer 1");
+
         // Gloves now 10 -2 = 8;
         sellItem(customerBasket, "Glove", 2);
         System.out.println(customerBasket);
@@ -47,6 +50,24 @@ public class Main {
         sellItem(customerBasket, "Computer", 1);
         System.out.println(customerBasket);
 
+        // Adding a new basket
+        Basket newBasket = new Basket("Customer 2");
+        sellItem(newBasket, "Glove", 100);
+        sellItem(newBasket, "Ruler", 5);
+        sellItem(newBasket, "Computer", 1);
+        System.out.println(newBasket);
+
+        removeItem(customerBasket, "Glove", 1);
+        removeItem(newBasket, "Ruler", 1);
+
+        System.out.println(customerBasket);
+        System.out.println(newBasket);
+
+        System.out.println("Printing stock items before and after checkout");
+        System.out.println(stocklList);
+        checkOut(newBasket);
+        checkOut(customerBasket);
+        System.out.println(stocklList);
 
         // now print the updated stockList
         System.out.println(stocklList);
@@ -77,11 +98,30 @@ public class Main {
             System.out.println("Item not in stock, " + item);
             return 0;
         }
-        if (stocklList.sellStock(item, quantity) != 0) {
-            basket.addToBasket(stockItem, quantity);
-            return quantity;
+        if (stocklList.reserveStock(item, quantity) != 0) {
+            return basket.addToBasket(stockItem, quantity);
         }
         return 0;
+    }
+
+    public static int removeItem(Basket basket, String item, int quantity) {
+        // retrieve the item from stock list
+        StockItem stockItem = stocklList.get(item);
+        if (stockItem == null) {
+            System.out.println("Item not in stock, " + item);
+            return 0;
+        }
+        if (basket.removeFromBasket(stockItem, quantity) == quantity) {
+            return stocklList.unreserveStock(item, quantity);
+        }
+        return 0;
+    }
+
+    public static void checkOut(Basket basket) {
+        for (Map.Entry<StockItem, Integer> item : basket.items().entrySet()) {
+            stocklList.sellStock(item.getKey().getName(), item.getValue());
+        }
+        basket.clearBasket();
     }
 }
 
